@@ -2,7 +2,7 @@
 
 ## Genie Hou
 
-### This is a project Nancy Ma and I created for the class Processing Big Data for Analytics Application in NYU CAS. We are studying the changes in traffic patterns for both subway traffic patterns as well as driving traffic as an impact of the pandemic.
+### This is a project Nancy Ma and I created for the class Processing Big Data for Analytics Application at NYU CAS. We are studying the changes in traffic patterns for both subway traffic patterns as well as driving traffic as an impact of the pandemic.
 ### Here is the link to Medium Story page: 
 
 For the overall group combined data set, I wrote the MapReduce Codes to perform Analytics on the data set.(In point 10 and 11)
