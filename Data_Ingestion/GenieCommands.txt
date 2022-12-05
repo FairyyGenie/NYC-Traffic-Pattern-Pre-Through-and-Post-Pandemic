@@ -1,0 +1,142 @@
+Commands for the Project
+
+Hive:
+1. creating the tables in hive
+>create external table 2019AnnualRidership (stations STRING, bool INT, `2014` BIGINT, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT,change BIGINT,rate FLOAT,rank INT) 
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+   "separatorChar" = ",",
+   "quoteChar"= "\"") STORED AS TEXTFILE LOCATION '/user/ch3801/2019AnnualRidership';
+ 
+>load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/ProjectData/2019AnnualTotalRidership.csv' overwrite into table 2019AnnualRidership;
+ 
+>describe 2019AnnualRidership;
+ 
+>select * from 2019Annual Ridership;
+ 
+>create external table 2020AnnualRidership (stations STRING, bool INT, boro STRING, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT,change BIGINT,rate FLOAT,rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' WITH SERDEPROPERTIES("seperatorChar"=",","quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/2020AnnualRidership';
+ 
+>load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/2020AnnualTotalRidership.csv' overwrite into table 2020AnnualRidership;
+ 
+>describe 2020AnnualRidership;
+ 
+>select * from 2020Annual Ridership;
+ 
+>create external table 2021AnnualRidership (stations STRING, bool INT, boro STRING, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT, `2021` BIGINT,change BIGINT,rate FLOAT,rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' WITH SERDEPROPERTIES("seperatorChar"=",","quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/2021AnnualRidership';
+ 
+> load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/2021AnnualTotalRidership.csv' overwrite into table 2021AnnualRidership;
+ 
+> describe 2021AnnualRidership;
+ 
+>select * from 2021Annual Ridership;
+ 
+ 
+2. Selecting wanted columns and joining the tables into one
+ 
+>SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.change,a.rate,a.rank,b.`2020`,b.change,b.rate,b.rank FROM 2019AnnualRidership a JOIN 2020AnnualRidership b ON (a.stations=b.stations);
+ 
+> ALTER TABLE 2019AnnualRidership CHANGE change `18-19change` STRING;
+> ALTER TABLE 2019AnnualRidership CHANGE rate `18-19rate` STRING;
+> ALTER TABLE 2019AnnualRidership CHANGE rank `19rank` STRING;
+> ALTER TABLE 2020AnnualRidership CHANGE change `19-20change` STRING;
+> ALTER TABLE 2020AnnualRidership CHANGE rate `19-20rate` STRING;
+> ALTER TABLE 2020AnnualRidership CHANGE rank `20rank` STRING;
+> ALTER TABLE 2021AnnualRidership CHANGE rate `20-21rate` STRING;
+> ALTER TABLE 2021AnnualRidership CHANGE rank `21rank` STRING;
+ 
+>create table AandB AS  SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,b.`2020`,b.`19-20change`,b.`19-20rate`,b.`20rank` FROM 2019AnnualRidership a JOIN 2020AnnualRidership b ON (a.stations=b.stations);
+ 
+> create external table WholeTable AS SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,a.`2020`,a.`19-20change`,a.`19-20rate`,a.`20rank`,b.`2021`,b.`20-21change`,b.`20-21rate`,b.`21rank` FROM AandB a JOIN 2021AnnualRidership b ON (a.stations=b.stations);
+ 
+>create external table FinishedProjectTable (stations STRING, boro STRING, `2018` STRING,`2019` STRING, `18-19change` STRING, `18-19rate` STRING,`19rank` STRING, `2020` STRING, `19-20change` STRING, `19-20rate` STRING,`20rank` STRING,`2021` STRING, `20-21change` STRING, `20-21rate` STRING,`21rank` STRING )STORED AS TEXTFILE LOCATION '/user/ch3801/CombinedTable';
+ 
+>INSERT OVERWRITE TABLE FinishedProjectTable Select * from WholeTable;
+ 
+>select * from FinishedProjectTable;
+
+create external table 2021DayTable (stations STRING, bool INT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT, `2021` BIGINT, `20-21change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_Day/2021DayTable';
+
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_Day/2021DayAverage.csv' overwrite into table 2021DayTable;
+
+create external table 2020DayTable (stations STRING, bool INT, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT, `19-20change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_Day/2020DayTable';
+
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_Day/2020DayAverage.csv' overwrite into table 2020DayTable;
+
+create external table 2019DayTable (stations STRING, bool INT, `2014` BIGINT, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `18-19change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_Day/2019DayTable';
+
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_Day/2019DayAverage.csv' overwrite into table 2019DayTable;
+
+create external table 2020EndTable (stations STRING, bool INT, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT, `19-20change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_End/2020EndTable';
+
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_End/2020EndAverage.csv' overwrite into table 2020EndTable;
+
+ create external table 2021EndTable (stations STRING, bool INT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `2020` BIGINT, `2021` BIGINT, `20-21change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_End/2021EndTable';
+
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_End/2021EndAverage.csv' overwrite into table 2021EndTable;
+
+create external table 2019EndTable (stations STRING, bool INT, `2014` BIGINT, `2015` BIGINT, `2016` BIGINT, `2017` BIGINT, `2018` BIGINT, `2019` BIGINT, `18-19change` BIGINT, rate FLOAT, rank INT) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+. . . . . . . . . . . . . . . . . . . .> WITH SERDEPROPERTIES (
+. . . . . . . . . . . . . . . . . . . .> "separatorChar"=",",
+. . . . . . . . . . . . . . . . . . . .> "quoteChar"="\"") STORED AS TEXTFILE LOCATION '/user/ch3801/Project_End/2019EndTable';
+
+ load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/ch3801/Project_End/2019EndAverage.csv' overwrite into table 2019EndTable;
+
+create table Dayab AS SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,b.`2020`,b.`19-20change`,b.`19-20rate`,b.`20rank` FROM 2019daytable a JOIN 2020daytable b ON (a.stations=b.stations);
+
+create table DayWholeTable AS SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,a.`2020`,a.`19-20change`,a.`19-20rate`,a.`20rank`,b.`2021`,b.`20-21change`,b.`20-21rate`,b.`21rank` FROM Dayab a JOIN 2021daytable b ON (a.stations=b.stations);
+
+create external table alldaytable (stations STRING, boro STRING, `2018` STRING,`2019` STRING, `18-19change` STRING, `18-19rate` STRING,`19rank` STRING, `2020` STRING, `19-20change` STRING, `19-20rate` STRING,`20rank` STRING,`2021` STRING, `20-21change` STRING, `20-21rate` STRING,`21rank` STRING )STORED AS TEXTFILE LOCATION '/user/ch3801/CombinedDayTable';
+
+INSERT OVERWRITE TABLE alldaytable Select * from DayWholeTable;
+
+create table Endab AS SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,b.`2020`,b.`19-20change`,b.`19-20rate`,b.`20rank` FROM 2019endytable a JOIN 2020endtable b ON (a.stations=b.stations);
+
+create table EndWholeTable AS SELECT a.stations, a.boro,a.`2018`, a.`2019`,a.`18-19change`,a.`18-19rate`,a.`19rank`,a.`2020`,a.`19-20change`,a.`19-20rate`,a.`20rank`,b.`2021`,b.`20-21change`,b.`20-21rate`,b.`21rank` FROM Endab a JOIN 2021endtable b ON (a.stations=b.stations);
+
+create external table allendtable (stations STRING, boro STRING, `2018` STRING,`2019` STRING, `18-19change` STRING, `18-19rate` STRING,`19rank` STRING, `2020` STRING, `19-20change` STRING, `19-20rate` STRING,`20rank` STRING,`2021` STRING, `20-21change` STRING, `20-21rate` STRING,`21rank` STRING )STORED AS TEXTFILE LOCATION '/user/ch3801/CombinedEndTable';
+
+INSERT OVERWRITE TABLE allendtable Select * from EndWholeTable;
+
+ CREATE TABLE csv_daytable ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED as textfile AS select 'stations' as stations ,'boro' as boro,'2018' as `2018`,'2019' as `2019`, '18-19change' as `18-19change`, '18-19rate' as `18-19rate`,'19rank' as `19rank`, '2020' as `2020`, '19-20change' as `19-20change`, '19-20rate' as `19-20rate`,'20rank' as `20rank`,'2021' as `2021`, '20-21change' as `20-21change`, '20-21rate' as `20-21rate`,'21rank' as `21rank`;
+
+INSERT INTO csv_daytable SELECT * FROM DayWholeTable;
+
+CREATE TABLE csv_endtable ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED as textfile AS select 'stations' as stations ,'boro' as boro,'2018' as `2018`,'2019' as `2019`, '18-19change' as `18-19change`, '18-19rate' as `18-19rate`,'19rank' as `19rank`, '2020' as `2020`, '19-20change' as `19-20change`, '19-20rate' as `19-20rate`,'20rank' as `20rank`,'2021' as `2021`, '20-21change' as `20-21change`, '20-21rate' as `20-21rate`,'21rank' as `21rank`;
+
+INSERT INTO csv_endtable SELECT * FROM EndWholeTable;
+
+CREATE TABLE csv_annualtable ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED as textfile AS select 'stations' as stations ,'boro' as boro,'2018' as `2018`,'2019' as `2019`, '18-19change' as `18-19change`, '18-19rate' as `18-19rate`,'19rank' as `19rank`, '2020' as `2020`, '19-20change' as `19-20change`, '19-20rate' as `19-20rate`,'20rank' as `20rank`,'2021' as `2021`, '20-21change' as `20-21change`, '20-21rate' as `20-21rate`,'21rank' as `21rank`;
+
+INSERT INTO csv_annualtable SELECT * FROM finishedprojecttable;
+
+create external table csv_alldaytable (stations STRING, boro STRING, `2018` STRING,`2019` STRING, `18-19change` STRING, `18-19rate` STRING,`19rank` STRING, `2020` STRING, `19-20change` STRING, `19-20rate` STRING,`20rank` STRING,`2021` STRING, `20-21change` STRING, `20-21rate` STRING,`21rank` STRING )STORED AS TEXTFILE LOCATION '/user/ch3801/csv_CombinedDayTable';
+
+create external table csv_allendtable (stations STRING, boro STRING, `2018` STRING,`2019` STRING, `18-19change` STRING, `18-19rate` STRING,`19rank` STRING, `2020` STRING, `19-20change` STRING, `19-20rate` STRING,`20rank` STRING,`2021` STRING, `20-21change` STRING, `20-21rate` STRING,`21rank` STRING )STORED AS TEXTFILE LOCATION '/user/ch3801/csv_CombinedendTable';
+
+INSERT OVERWRITE TABLE csv_alldaytable Select * from csv_daytable;
+
+INSERT OVERWRITE DIRECTORY '/user/ch3801/goodweekday' ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘!’ SELECT * FROM csv_alldaytable;
+
+INSERT OVERWRITE DIRECTORY '/user/ch3801/goodweekend’ ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘!’ SELECT * FROM csv_allendtable;
+
+INSERT OVERWRITE DIRECTORY '/user/ch3801/goodyear_project’ ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘!’ SELECT * FROM wholetable;
+
+HDFS coomands:
+hdfs dfs -cat goodweekday/* | hadoop fs -put - /user/ch3801/goodcsvfils/weekday.csv
+hdfs dfs -cat goodweekend/* | hadoop fs -put - /user/ch3801/goodcsvfils/weekend.csv
+hdfs dfs -cat goodyear_project/* | hadoop fs -put - /user/ch3801/goodcsvfils/weekend.csv
