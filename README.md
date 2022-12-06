@@ -9,7 +9,7 @@ For the overall group combined data set, I wrote the MapReduce Codes to perform 
 
 Data Ingestion
 
-1. Upload all data files from local to peel to a directory /user/ch3801/ProjectData in there you can find and have been given the access to all files. Files including 9 2019~2021 MTA Ridership files.
+1. Upload all data files from local to peel to a directory /user/ch3801/ProjectData. Files including 9 2019~2021 MTA Ridership files.
 
 2. Load all data files into Hive by creating tables and load data inpath files 
 	(commands also shown in GenieCommands.hql)
@@ -28,7 +28,7 @@ Data Ingestion
 
 	- INSERT OVERWRITE DIRECTORY '/user/ch3801/goodweekday' ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘!’ SELECT * FROM csv_alldaytable;
 
-5. Resulting in 3 csv files in /user/ch3801/goodcsvfils in there you can find and have been given the access to all files.
+5. Resulting in 3 csv files in /user/ch3801/goodcsvfils
 Input files:
 	- /user/ch3801/goodcsvfils/weekday.csv
 	- /user/ch3801/goodcsvfils/weekend.csv
